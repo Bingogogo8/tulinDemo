@@ -33,9 +33,7 @@ public class HTTPUtils {
      */
     public static ChatMessage sendMessage(String message) {
 
-// 请求json，里面包含reqType，perception，userInfo
-
-
+  // 请求json，里面包含reqType，perception，userInfo
         ChatMessage chatMessage = new ChatMessage();
         String gsonResult = doGet(message);
         if (gsonResult != null) {
@@ -52,7 +50,7 @@ public class HTTPUtils {
             }
         }
         chatMessage.setData(new Date());
-        chatMessage.setType(ChatMessage.Type.INCOUNT);
+        chatMessage.setType(ChatMessage.Type.Robot);
         return chatMessage;
     }
 
@@ -87,43 +85,37 @@ public class HTTPUtils {
       return：数据
      */
     public static String doGet(String message) {
-       /* String result = "";   //避免空指针
-        String url = setParmat();*/
-        /* InputStream is = null;  */         //将某种格式的文本或者图片等转换成数据流的方式来传输
         String reqStr = getInputUrl(message);
         BufferedReader in = null;
-        PrintWriter out = null;
+        PrintWriter out = null;   //该类可用来创建一个文件并向文本文件写入数据
         String responseStr = "";
 
         try {
             URL url1 = new URL(Config.getInstance().getUrlKey());
             // 打开和URL之间的连接
-            URLConnection conn = url1.openConnection();
-            HttpURLConnection connection = (HttpURLConnection) conn;
+            HttpURLConnection connection = (HttpURLConnection) url1.openConnection();
             //   connection.setRequestMethod("GET");
 
             // 设置请求属性
             connection.setReadTimeout(5 * 1000);
             connection.setConnectTimeout(5 * 1000);
-            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");//设定 请求格式 json
             connection.setRequestProperty("x-adviewrtb-version", "2.1");
-            // 发送POST请求必须设置如下两行
+            // 发送POST请求的必要设定
             connection.setDoOutput(true);
             connection.setDoInput(true);
-            // 获取URLConnection对象对应的输出流
+            // 获取URLConnection对象对应的输出流并发送
             out = new PrintWriter(connection.getOutputStream());
-            // 发送请求参数
             out.write(reqStr);
-            // flush输出流的缓冲
+            // 刷新输出流的缓冲
             out.flush();
             connection.connect();
             // 定义BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                responseStr += line;
+                responseStr += line;    //返回的json数据
             }
-            String responseMessage = new Integer(connection.getResponseCode()).toString();
         } catch (Exception e) {
             Log.d("HTTPUtils", "发送 POST 请求出现异常！" + e);
         } finally {

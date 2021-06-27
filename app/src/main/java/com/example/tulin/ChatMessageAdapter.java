@@ -36,19 +36,18 @@ public class ChatMessageAdapter extends BaseAdapter {
     public int getItemViewType(int position) {
         ChatMessage chatMessage = list.get(position);
         // 如果是机器人：0，我：1
-        if (chatMessage.getType() == ChatMessage.Type.INCOUNT) {
+        if (chatMessage.getType() == ChatMessage.Type.Robot) {
             return 0;
         }
         return 1;
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatMessage chatMessage = list.get(position);
+        ViewHolder viewHolder;
         if (convertView == null) {
-            ViewHolder viewHolder = null;
-            // 通过ItemType加载不同的布局
+            // 通过getItemViewType加载不同的布局
             if (getItemViewType(position) == 0) {
 
                 convertView = LayoutInflater.from(parent.getContext()).inflate(
@@ -70,33 +69,11 @@ public class ChatMessageAdapter extends BaseAdapter {
             }
             convertView.setTag(viewHolder);
         } else {
-            ViewHolder viewHolder = null;
-
-            if (chatMessage.getType() == ChatMessage.Type.INCOUNT) {
-                convertView = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.left, null);
-                viewHolder = new ViewHolder();
-                viewHolder.chatTime = (TextView) convertView
-                        .findViewById(R.id.chat_left_time);
-                viewHolder.chatMessage = (TextView) convertView
-                        .findViewById(R.id.chat_left_message);
-            }
-            if (chatMessage.getType() == ChatMessage.Type.OUTCOUNT) {
-                convertView = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.right, null);
-                viewHolder = new ViewHolder();
-                viewHolder.chatTime = (TextView) convertView
-                        .findViewById(R.id.chat_right_time);
-                viewHolder.chatMessage = (TextView) convertView
-                        .findViewById(R.id.chat_right_message);
-            }
-            convertView.setTag(viewHolder);
-
+            viewHolder = (ViewHolder) convertView.getTag();
         }
-        ;
-        //else { chatMessage.setType(ChatMessage.Type.OUTCOUNT); }
+
+
         // 设置数据
-        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         viewHolder.chatTime.setText(ChatDate.dateToString(chatMessage.getData()));
         viewHolder.chatMessage.setText(chatMessage.getMessage());
 
